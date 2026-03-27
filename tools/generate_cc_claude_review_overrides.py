@@ -56,6 +56,16 @@ REVIEWER_TOOLS_NOTE = (
     "STORY.md for full context\" in your prompt rather than copying their contents."
 )
 
+FACT_CHECK_RULES = (
+    "**FACT-CHECK RULES for reviewer prompt**: Always append the following rules at the end of "
+    "the prompt sent to the reviewer:\n"
+    "- Numbers in this prompt are authoritative. If project files conflict, trust this prompt and flag the discrepancy.\n"
+    "- When citing papers: verify publication status via WebSearch. Say \"preprint\" for arXiv-only. Never fabricate a venue.\n"
+    "- Do not invent numbers for cited papers. Only quote numbers you verified via WebSearch or Read.\n"
+    "- When claiming \"paper X showed Y\", verify it. If unverified, write \"the prompt states X showed Y\".\n"
+    "- Before finalizing, self-audit: mark any unverified venue, date, or number with [unverified]."
+)
+
 ASYNC_POLLING_NOTE = (
     "After this call, save the returned `jobId` and poll "
     "`mcp__claude-review__review_status` with `waitSeconds=60` until `done=true`. "
@@ -283,7 +293,7 @@ def transform_body(text: str) -> str:
     # Prerequisites block: replace Codex MCP setup with claude-review setup
     text = re.sub(
         r"## Prerequisites\n\n(?:- \*{0,2}.*(?:\n(?!##).*)*)",
-        PREREQ_BLOCK + "\n\n" + REVIEWER_TOOLS_NOTE + "\n",
+        PREREQ_BLOCK + "\n\n" + REVIEWER_TOOLS_NOTE + "\n\n" + FACT_CHECK_RULES + "\n",
         text,
         count=1,
     )

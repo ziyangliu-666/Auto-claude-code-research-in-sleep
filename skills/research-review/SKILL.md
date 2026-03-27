@@ -28,6 +28,13 @@ Get a multi-round critical review of research work from an external LLM with max
 
 **Reviewer tool access**: The Claude reviewer has full tool access (WebSearch, Read, Grep, Glob, Write, Bash, etc.) and runs in the same project directory. You can ask it to read specific files, search for code, or look up papers — instead of pasting everything into the prompt. For example, include "Please read README.md and STORY.md for full context" in your prompt rather than copying their contents.
 
+**FACT-CHECK RULES for reviewer prompt**: Always append the following rules at the end of the prompt sent to the reviewer:
+- Numbers in this prompt are authoritative. If project files conflict, trust this prompt and flag the discrepancy.
+- When citing papers: verify publication status via WebSearch. Say "preprint" for arXiv-only. Never fabricate a venue.
+- Do not invent numbers for cited papers. Only quote numbers you verified via WebSearch or Read.
+- When claiming "paper X showed Y", verify it. If unverified, write "the prompt states X showed Y".
+- Before finalizing, self-audit: mark any unverified venue, date, or number with [unverified].
+
 ## Workflow
 
 ### Step 1: Gather Research Context
