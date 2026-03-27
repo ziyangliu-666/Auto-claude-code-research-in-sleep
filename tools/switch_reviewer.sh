@@ -22,6 +22,11 @@ USER_SKILLS_DIR="$HOME/.claude/skills"
 CC_CLAUDE_OVERLAY="$SKILLS_DIR/skills-cc-claude-review"
 MCP_SERVER="$REPO_ROOT/mcp-servers/claude-review/server.py"
 
+# Reviewer configuration (override via environment variables before running this script)
+CLAUDE_REVIEW_MODEL="${CLAUDE_REVIEW_MODEL:-claude-sonnet-4-6}"
+CLAUDE_REVIEW_EFFORT="${CLAUDE_REVIEW_EFFORT:-max}"
+CLAUDE_REVIEW_SYSTEM="${CLAUDE_REVIEW_SYSTEM:-You are a rigorous research reviewer with full tool access (WebSearch, Read, Grep, Glob, Bash). Be brutally honest. Write in the same language as the prompt you receive.}"
+
 # Skills that have Claude reviewer overlays
 OVERLAY_SKILLS=(
     ablation-planner
@@ -124,19 +129,21 @@ switch_to_claude() {
     if command -v claude &>/dev/null; then
         # Remove first to avoid duplicates, ignore errors
         claude mcp remove claude-review 2>/dev/null || true
-        claude mcp add claude-review -s user -- python3 "$MCP_SERVER"
-        echo "  MCP server registered."
+        claude mcp add claude-review -s user \
+            -e CLAUDE_REVIEW_MODEL="$CLAUDE_REVIEW_MODEL" \
+            -e CLAUDE_REVIEW_EFFORT="$CLAUDE_REVIEW_EFFORT" \
+            -e CLAUDE_REVIEW_SYSTEM="$CLAUDE_REVIEW_SYSTEM" \
+            -- python3 "$MCP_SERVER"
+        echo "  MCP server registered (model=$CLAUDE_REVIEW_MODEL, effort=$CLAUDE_REVIEW_EFFORT)."
     else
         echo "  WARNING: 'claude' CLI not found. Please register manually:"
-        echo "    claude mcp add claude-review -s user -- python3 $MCP_SERVER"
+        echo "    claude mcp add claude-review -s user -e CLAUDE_REVIEW_MODEL=$CLAUDE_REVIEW_MODEL -e CLAUDE_REVIEW_EFFORT=$CLAUDE_REVIEW_EFFORT -- python3 $MCP_SERVER"
     fi
 
     echo ""
     echo "Done! Reviewer backend is now: Claude CLI"
     echo ""
-    echo "Optional: set a specific Claude model for reviews:"
-    echo "  claude mcp remove claude-review"
-    echo "  claude mcp add claude-review -s user -e CLAUDE_REVIEW_MODEL=claude-opus-4-1 -- python3 $MCP_SERVER"
+    echo "Override defaults before running: CLAUDE_REVIEW_MODEL=opus CLAUDE_REVIEW_EFFORT=high ./tools/switch_reviewer.sh claude"
 }
 
 switch_to_codex() {
