@@ -73,6 +73,13 @@ mcp__claude-review__review_start:
 
     Be honest. Do not inflate claims beyond what the data supports.
     A single positive result on one dataset does not support a general claim.
+
+    FACT-CHECK RULES:
+    - Numbers in this prompt are authoritative. If project files conflict, trust this prompt and flag the discrepancy.
+    - When citing papers: verify publication status via WebSearch. Say "preprint" for arXiv-only. Never fabricate a venue.
+    - Do not invent numbers for cited papers. Only quote numbers you verified via WebSearch or Read.
+    - When claiming "paper X showed Y", verify it. If unverified, write "the prompt states X showed Y".
+- Before finalizing, self-audit: mark any unverified venue, date, or number with [unverified].
 ```
 
 After this call, save the returned `jobId` and poll `mcp__claude-review__review_status` with `waitSeconds=60` until `done=true`. **Be patient** — the reviewer has tools (WebSearch, Read, etc.) and may spend several minutes searching literature or reading files. Do NOT assume timeout until at least 20 polling attempts. The completed payload contains `response` (reviewer output) and `threadId` (for follow-up rounds).
