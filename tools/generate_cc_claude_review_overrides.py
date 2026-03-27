@@ -48,6 +48,14 @@ REVIEWER_LINE = (
     "for a specific Claude model override."
 )
 
+REVIEWER_TOOLS_NOTE = (
+    "**Reviewer tool access**: The Claude reviewer has full tool access (WebSearch, Read, "
+    "Grep, Glob, Write, Bash, etc.) and runs in the same project directory. You can ask "
+    "it to read specific files, search for code, or look up papers — instead of pasting "
+    "everything into the prompt. For example, include \"Please read README.md and "
+    "STORY.md for full context\" in your prompt rather than copying their contents."
+)
+
 ASYNC_POLLING_NOTE = (
     "After this call, save the returned `jobId` and poll "
     "`mcp__claude-review__review_status` with `waitSeconds=60` until `done=true`. "
@@ -247,6 +255,12 @@ def transform_body(text: str) -> str:
     # Also catch "**ALWAYS use ``**" variants
     text = re.sub(r"\*{0,2}ALWAYS use ``\*{0,2}[^\n]*", "ALWAYS request strict, high-rigor feedback from the Claude reviewer.", text)
 
+    # Fix stale "cannot read your files" — Claude reviewer HAS tools (Read, Grep, WebSearch, etc.)
+    text = text.replace(
+        "the external model cannot read your files",
+        "the Claude reviewer has full tool access (Read, Grep, WebSearch, etc.) and runs in the same project directory — you can ask it to read files or search literature directly instead of pasting everything into the prompt",
+    )
+
     # Fix old polling waitSeconds references
     text = text.replace("waitSeconds=20", "waitSeconds=60")
 
@@ -269,7 +283,7 @@ def transform_body(text: str) -> str:
     # Prerequisites block: replace Codex MCP setup with claude-review setup
     text = re.sub(
         r"## Prerequisites\n\n(?:- \*{0,2}.*(?:\n(?!##).*)*)",
-        PREREQ_BLOCK + "\n",
+        PREREQ_BLOCK + "\n\n" + REVIEWER_TOOLS_NOTE + "\n",
         text,
         count=1,
     )

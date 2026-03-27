@@ -28,6 +28,7 @@ CLAUDE_BIN = os.environ.get("CLAUDE_BIN", "claude")
 DEFAULT_MODEL = os.environ.get("CLAUDE_REVIEW_MODEL", "")
 DEFAULT_SYSTEM = os.environ.get("CLAUDE_REVIEW_SYSTEM", "")
 DEFAULT_TOOLS = os.environ.get("CLAUDE_REVIEW_TOOLS", None)
+DEFAULT_EFFORT = os.environ.get("CLAUDE_REVIEW_EFFORT", "")
 DEFAULT_TIMEOUT_SEC = int(os.environ.get("CLAUDE_REVIEW_TIMEOUT_SEC", "1800"))
 DEBUG_LOG = Path(os.environ.get("CLAUDE_REVIEW_DEBUG_LOG", f"/tmp/{SERVER_NAME}-mcp-debug.log"))
 STATE_DIR = Path(
@@ -200,6 +201,10 @@ def build_command(
     selected_tools = DEFAULT_TOOLS if tools is None else tools
     if selected_tools is not None:
         cmd.extend(["--tools", selected_tools])
+
+    if DEFAULT_EFFORT:
+        cmd.extend(["--effort", DEFAULT_EFFORT])
+
     return cmd
 
 

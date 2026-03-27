@@ -26,6 +26,8 @@ Get a multi-round critical review of research work from an external LLM with max
 - This gives Claude Code access to `mcp__claude-review__review_start`, `mcp__claude-review__review_reply_start`, and `mcp__claude-review__review_status`.
 - Optionally set model: `claude mcp add claude-review -s user -e CLAUDE_REVIEW_MODEL=claude-opus-4-1 -- python3 /path/to/server.py`
 
+**Reviewer tool access**: The Claude reviewer has full tool access (WebSearch, Read, Grep, Glob, Write, Bash, etc.) and runs in the same project directory. You can ask it to read specific files, search for code, or look up papers — instead of pasting everything into the prompt. For example, include "Please read README.md and STORY.md for full context" in your prompt rather than copying their contents.
+
 ## Workflow
 
 ### Step 1: Gather Research Context
@@ -85,7 +87,7 @@ Update project memory/notes with key review conclusions.
 ## Key Rules
 
 - ALWAYS request strict, high-rigor feedback from the Claude reviewer.
-- Send comprehensive context in Round 1 — the external model cannot read your files
+- Send comprehensive context in Round 1 — the Claude reviewer has full tool access (Read, Grep, WebSearch, etc.) and runs in the same project directory — you can ask it to read files or search literature directly instead of pasting everything into the prompt
 - Be honest about weaknesses — hiding them leads to worse feedback
 - Push back on criticisms you disagree with, but accept valid ones
 - Focus on ACTIONABLE feedback — "what experiment would fix this?"
