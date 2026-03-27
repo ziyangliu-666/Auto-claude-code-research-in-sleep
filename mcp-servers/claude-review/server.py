@@ -184,7 +184,7 @@ def build_command(
     if not bin_path:
         raise FileNotFoundError(f"Claude CLI not found: {CLAUDE_BIN}")
 
-    cmd = [bin_path, "-p", prompt, "--output-format", "json", "--permission-mode", "default"]
+    cmd = [bin_path, "-p", prompt, "--output-format", "json", "--permission-mode", "default", "--bare"]
 
     if session_id:
         cmd.extend(["--resume", session_id])
