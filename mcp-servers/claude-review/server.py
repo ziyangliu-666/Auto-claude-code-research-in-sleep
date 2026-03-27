@@ -184,7 +184,7 @@ def build_command(
     if not bin_path:
         raise FileNotFoundError(f"Claude CLI not found: {CLAUDE_BIN}")
 
-    cmd = [bin_path, "-p", prompt, "--output-format", "json", "--permission-mode", "default", "--bare"]
+    cmd = [bin_path, "-p", prompt, "--output-format", "json", "--dangerously-skip-permissions", "--strict-mcp-config"]
 
     if session_id:
         cmd.extend(["--resume", session_id])
@@ -297,7 +297,6 @@ def start_async_review(
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             close_fds=True,
-            start_new_session=True,
         )
     except OSError as exc:
         job["status"] = "failed"
